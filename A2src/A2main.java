@@ -9,11 +9,18 @@ public class A2main {
                 map = World.valueOf(worldChoice).map;
             } catch(IllegalArgumentException iae) {
                 System.out.println("Not a valid map");
-                return;
-            }
-            int tornadoNum
+                return;            }
+            int tornadoNum=0;
             switch(map.length) {
-                
+                case 5:
+                    tornadoNum = 5;
+                    break;
+                case 7:
+                    tornadoNum = 10;
+                    break;
+                case 11:
+                    tornadoNum = 28;
+                    break;
             }
             agent = new Agent(map, tornadoNum);
             switch(agentType){
