@@ -22,26 +22,17 @@ public class Node {
         this.y=y;
         this.value=value;
     }
-    // Overriding equals() to compare two Complex objects
- @Override
- public boolean equals(Object o) {
-
-     // If the object is compared with itself then return true
-     if (o == this) {
-         return true;
-     }
-
-     /* Check if o is an instance of Complex or not
-       "null instanceof [type]" also returns false */
-     if (!(o instanceof Node)) {
-         return false;
-     }
-
-     // typecast o to Complex so that we can compare data members
+  
+  // Overriding equals() to compare two Complex objects
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+        return true;
+    }
+    if (!(o instanceof Node)) {
+        return false;
+    }
     Node node = (Node) o;
-
-     // Compare the data members and return accordingly
-     return Double.compare(x, node.x) == 0
-             && Double.compare(y, node.y) == 0;
- }
+    return (Double.compare(x, node.x) == 0 && Double.compare(y, node.y) == 0);
+  }
 }
