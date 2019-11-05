@@ -29,7 +29,7 @@ public class Agent {
         while (!unexplored) {
             x = (int)(knownMap.length * Math.random());
             y = (int)(knownMap[0].length * Math.random());
-            unexplored = (knownMap[x][y]=='x');
+            unexplored = (knownMap[x][y]=='?');
         }
         return new int[]{x,y};
     }
@@ -58,6 +58,7 @@ public class Agent {
         ArrayList<Node> knownNodes = new ArrayList<>();
         ArrayList<Node> neighbours = new ArrayList<>();
         knownNodes.add(new Node(0, 0, knownMap[0][0]));
+        knownNodes.add(new Node(knownMap.length/2, knownMap[0].length/2, knownMap[knownMap.length/2][knownMap[0].length/2]));
         for (Node node : knownNodes) {
             if (node.getValue() == '0') {
                 neighbours = getNeighbours(node.getX(), node.getY());
@@ -110,20 +111,25 @@ public class Agent {
 
     }
 
-    public ArrayList<Node> getNeighbours(int x, int y) {
+    public boolean probeNeighbours(int x, int y) {
         ArrayList<Node> neighbours = new ArrayList<>();
         for (int xMod = -1; xMod < 2; xMod++) {
             for (int yMod = -1; yMod < 2; yMod++) {
-              if (!(xMod == 0 && yMod == 0)) {
+              if (!(xMod == -1 && yMod == 1) || !(xMod == 1 && yMod == -1)) {
                 int neighbourX = x+xMod;
                 int neighbourY = y+yMod;
-                if (!(neighbourX < 0 || neighbourY < 0 || neighbourX >= knownMap[0].length || neighbourY >= knownMap[0].length)) {
-                  neighbours.add(new Node(neighbourX, neighbourY, knownMap[neighbourX][neighbourY]));
+                if (!(neighbourX < 0 || neighbourY < 0 || neighbourX >= knownMap[0].length || neighbourY >= knownMap[0].length) && knownMap[neighbourX][neighbourY] =='?') {
+                  int num = probe(neighbourX, neighbourY);
+                  if (num != -1){
+                    neighbours.add(new Node(neighbourX, neighbourY, (char) num));
+                  } else {
+                    return false;
+                  }
                 }
               }
             }
         }
-        return neighbours;
+        return true;
     }
 
     public int getFlaggedNeighbours(int x, int y) {
