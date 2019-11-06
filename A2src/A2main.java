@@ -12,6 +12,9 @@ public class A2main {
                 return;            }
             int tornadoNum=0;
             switch(map.length) {
+                case 3:
+                    tornadoNum = 3;
+                    break;
                 case 5:
                     tornadoNum = 5;
                     break;
