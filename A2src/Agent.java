@@ -2,28 +2,84 @@ import java.util.ArrayList;
 
 public class Agent {
   ArrayList<int[]> explored = new ArrayList<>();
+  static ArrayList<boolean[]> clauses = new ArrayList<>();
+  ArrayList<ArrayList<Node>> nodeMap = new ArrayList<>();
   boolean gameOver;
   char[][] knownMap;
   char[][] master;
   int numberOfTornadoes;
 
+  void satX() {
+    int id = 0;
+    for (int x = 0; x < knownMap.length; x++) {
+      ArrayList<Node> row = new ArrayList<>();
+      for (int y = 0; y < knownMap[0].length; y++) {
+        row.add(new Node(x, y, knownMap[x][y], id));
+        id++;
+      }
+      nodeMap.add(row);
+    }
+    //Get uncovered with covered neighbours num
+    //Loop through them
+    ArrayList<String> formula = new ArrayList<String>();
+    for (int x = 0; x < knownMap.length; x++) {
+      for (int y = 0; y < knownMap[0].length; y++) {
+        if (knownMap[x][y] != '?' && knownMap[x][y] != 'f' && getUnknownNeighboursNum(x, y) > 0) {
+          formula.add(getKB(x,y));
+        }
+      }
+    }
 
 
-  // void dunno() {
-  //   int MAXVAR = 1000000; //max number of variables
-  //   int NBCLAUSES = 500000; // number of clauses
-  //   ISolver solver = SolverFactory.newDefault();
-  //   // prepare the solver to accept MAXVAR variables.
-  //   solver.newVar(MAXVAR);
-  //   solver.setExpectedNumberOfClauses(NBCLAUSES);
-  //   // Feed the solver using Dimacs format, using arrays of int
-  //   for (int i=0;<NBCLAUSES;i++) {
-  //     int [] clause = // get the clause from somewhere
-  //     // the clause should not contain a 0, only integer (positive or negative)
-  //     // with absolute values less or equal to MAXVAR
-  //     solver.addClause(new VecInt(clause));
-  //   }
-  // }
+
+
+    // PlBeliefSet kb = new PlBeliefSet();
+    // PlParser parser = new PlParser();
+    // kb.add((PlFormula) parser.parseFormula("(A || B)&& !(A || !B)"));
+    // Conjunction conj=kb.toCnf();
+  }
+
+  String getKB(int x, int y) {
+    clauses.clear();
+    int n = getUnknownNeighboursNum(x, y);
+    int c = knownMap[x][y];
+    boolean[] clausesArr = new boolean[n];
+    generateAllBinaryClauses(n, clausesArr, 0, c);
+    for(boolean[] clause : clauses) {
+      
+    }
+  }
+
+  static int weightOf(boolean[] arr) {
+    int sum = 0;
+    for (boolean val : arr) {
+        if (val) {
+          sum++;
+        }
+    }
+    return sum;
+  }
+
+  static void generateAllBinaryClauses(int n, boolean arr[], int i, int c) { 
+    if (i == n) { 
+      if (weightOf(arr) == c){
+        clauses.add(arr);
+      }
+        return; 
+    } 
+  
+    // First assign "0" at ith position 
+    // and try for all other permutations 
+    // for remaining positions 
+    arr[i] = false; 
+    generateAllBinaryClauses(n, arr, i + 1, c); 
+  
+    // And then assign "1" at ith position 
+    // and try for all other permutations 
+    // for remaining positions 
+    arr[i] = true; 
+    generateAllBinaryClauses(n, arr, i + 1, c); 
+} 
 
   int probe(int x, int y) {
     char value = master[x][y];
@@ -112,7 +168,7 @@ public class Agent {
           int val = knownMap[x][y] - '0';
           // System.out.println("afn "+x+","+y+" " + (val == getFlaggedNeighboursNum(x,
           // y)));
-          if (val == getFlaggedNeighboursNum(x, y) && getUnknownNeighboursNum(x, y)>0) {
+          if (val == getFlaggedNeighboursNum(x, y) && getUnknownNeighboursNum(x, y) > 0) {
             stuck = 0;
             if (!probeNeighbours(x, y)) {
               return -1;
@@ -130,11 +186,8 @@ public class Agent {
       for (int y = 0; y < knownMap[0].length; y++) {
         if (knownMap[x][y] != '?' && knownMap[x][y] != 'f') {
           int val = knownMap[x][y] - '0';
-          // System.out.println("amn "+x+","+y+" " + (val - getFlaggedNeighboursNum(x, y)
-          // == getUnknownNeighboursNum(x, y)));
-          // System.out.println(val + " minus " + getFlaggedNeighboursNum(x, y) + "==" +
-          // getUnknownNeighboursNum(x, y));
-          if (val - getFlaggedNeighboursNum(x, y) == getUnknownNeighboursNum(x, y) && getUnknownNeighboursNum(x, y)>0) {
+          if (val - getFlaggedNeighboursNum(x, y) == getUnknownNeighboursNum(x, y)
+              && getUnknownNeighboursNum(x, y) > 0) {
             stuck = 0;
             flagNeighbours(x, y);
           }
