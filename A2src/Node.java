@@ -1,10 +1,14 @@
 public class Node {
     int x, y;
     char value;
-    int id;
+    String id;
 
     int getX() {
       return this.x;
+    }
+
+    void setValue(char value) {
+        this.value = value;
     }
 
     int getY() {
@@ -18,11 +22,16 @@ public class Node {
     void setValue(int val) {
       value = (char) val;
     }
-    public Node(int x, int y, char value, int id){
+
+    String getID() {
+      return this.id;
+    }
+
+    public Node(int x, int y, char value, String id){
         this.x=x;
         this.y=y;
         this.value=value;
-        this.id = id;
+        this.id = "C"+id;
     }
   
   // Overriding equals() to compare two Complex objects
